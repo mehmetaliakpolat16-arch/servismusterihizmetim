@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://servismusterihizmetim.com.tr/sitemap.xml
