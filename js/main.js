@@ -11,11 +11,9 @@ document.querySelectorAll(".tabs [role=tab]").forEach(function (b) {
   });
 });
 
-// Telefon tıklaması → GTM "arama_tiklama" olayı (ikincil dönüşüm).
-// AntiClick ziyaretçiyi temiz onaylarsa gönderilir; bot tıklaması dönüşüm sayılmaz
-// (AntiClick yüklenemezse olay yine gönderilir). Kod ile tetiklenen (isTrusted=false),
-// sayfa açılır açılmaz ya da hiçbir etkileşim olmadan yapılan tıklamalar sayılmaz.
-// Birincil dönüşüm "arama_dogrulanmis" olayını AntiClick SDK'nın kendisi gönderir.
+// Telefon tıklaması → dataLayer "arama_tiklama" olayı (GTM'de dönüşüm tetikleyicisi olarak kullanılabilir).
+// Kod ile tetiklenen (isTrusted=false), sayfa açılır açılmaz ya da hiçbir etkileşim
+// olmadan yapılan tıklamalar sayılmaz.
 (function () {
   var loadedAt = Date.now();
   var engaged = false;
@@ -26,12 +24,7 @@ document.querySelectorAll(".tabs [role=tab]").forEach(function (b) {
   function pushClean(ev, domEvent) {
     if (domEvent && (!domEvent.isTrusted || !engaged || Date.now() - loadedAt < 3000)) return;
     window.dataLayer = window.dataLayer || [];
-    var ac = window.AntiClick;
-    if (ac && typeof ac.isClean === "function") {
-      ac.isClean().then(function (ok) { if (ok) window.dataLayer.push(ev); });
-    } else {
-      window.dataLayer.push(ev);
-    }
+    window.dataLayer.push(ev);
   }
 
   document.addEventListener("click", function (e) {
